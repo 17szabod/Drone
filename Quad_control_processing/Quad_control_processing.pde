@@ -32,9 +32,9 @@ void setup() {
      cam.start();
    }
    
-  String portName = Serial.list()[1];
-  System.out.println(portName);
-  myPort = new Serial(this, portName, 9600);
+  //String portName = Serial.list()[1];
+  //System.out.println(portName);
+  //myPort = new Serial(this, portName, 9600);
 }
 
 void draw() {
@@ -53,9 +53,25 @@ void draw() {
   
 }
 
+void keyPressed() {
+  if(key == 'a') {
+    rotateLeft();
+    System.out.println("Rotate Left");
+    //delay(50);
+    defaultRotate();
+  }
+  if(key == 'd') {
+    rotateRight();
+    System.out.println("Rotate Right");
+    //delay(50);
+    defaultRotate();
+  }
+}
+
 //Get quad location
 
 //Make decisision and run maneuver
+
 
 //Raise
 
@@ -65,9 +81,22 @@ void draw() {
 
 //Right
 
+
 //Rotate left
+void rotateLeft() {
+  yaw = 64;
+  //sendSLIP(Serial myPort, byte[] bytes)
+}
 
 //Rotate right
+void rotateRight() {
+  yaw = 192;
+}
+
+//Default rotate state
+void defaultRotate() {
+  yaw = 128;
+}
 
 //Sends commands over serial using SLIP
 void sendSLIP(Serial myPort, byte[] bytes) {
