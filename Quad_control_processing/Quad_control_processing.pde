@@ -53,18 +53,72 @@ void draw() {
   
 }
 
+//Click camera window
 void keyPressed() {
+  
   if(key == 'a') {
     rotateLeft();
     System.out.println("Rotate Left");
-    //delay(50);
-    defaultRotate();
+    delay(50);
+    hover();
   }
+  
   if(key == 'd') {
     rotateRight();
     System.out.println("Rotate Right");
-    //delay(50);
-    defaultRotate();
+    delay(50);
+    hover();
+  }
+  
+  if(key == 'q') {
+    rollLeft();
+    System.out.println("Roll Left");
+    delay(50);
+    hover();
+  }
+  
+  if(key == 'e') {
+    rollRight();
+    System.out.println("Roll Right");
+    delay(50);
+    hover();
+  }
+  
+  if(key == 'i') {
+    raise();
+    System.out.println("Raise");
+    delay(50);
+    hover();
+  }
+  
+  if(key == 'k') {
+    lower();
+    System.out.println("Lower");
+    delay(50);
+    hover();
+  }
+  
+  if(key == 'w') {
+    forward();
+    System.out.println("Forward");
+    delay(50);
+    hover();
+  }
+  
+  if(key == 's') {
+    backward();
+    System.out.println("Backward");
+    delay(50);
+    hover();
+  }
+}
+
+void keyReleased() {
+    if(key == ' ') {
+    startStop();
+    System.out.println("Liftoff");
+    delay(500);
+    hover();
   }
 }
 
@@ -72,14 +126,56 @@ void keyPressed() {
 
 //Make decisision and run maneuver
 
+//Lift off / Kill flight
+void startStop() {
+  yaw = 0;
+  throttle = 0;
+  roll = 0;
+}
+
+//Hover (Default State)
+void hover() {
+  yaw = 128;
+  roll = 128;
+  pitch = 128;
+  throttle = 0;
+}
 
 //Raise
+void raise() {
+  if(throttle <= 250) {
+    throttle+= 5;
+  }
+}
 
 //Lower
+void lower() {
+  if(throttle >= 5) {
+    throttle-= 5;
+  }
+}
+
+//Forward
+void forward() {
+  pitch = 192;
+}
+
+//Backwards
+void backward() {
+  pitch = 64;
+}
+
 
 //Left
+void rollLeft() {
+  roll = 64;
+  
+}
 
 //Right
+void rollRight() {
+  roll = 192;
+}
 
 
 //Rotate left
