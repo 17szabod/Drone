@@ -55,12 +55,6 @@ void draw() {
 
 //Click camera window
 void keyPressed() {
-  if(key == ' ') {
-    startStop();
-    System.out.println("Liftoff");
-    delay(500);
-    hover();
-  }
   
   if(key == 'a') {
     rotateLeft();
@@ -115,6 +109,15 @@ void keyPressed() {
     backward();
     System.out.println("Backward");
     delay(50);
+    hover();
+  }
+}
+
+void keyReleased() {
+    if(key == ' ') {
+    startStop();
+    System.out.println("Liftoff");
+    delay(500);
     hover();
   }
 }
