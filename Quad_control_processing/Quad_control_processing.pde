@@ -16,9 +16,13 @@ float r, g, b;
 //Controls
 int throttle, yaw, pitch, roll;
 
+//Boolean to determine if the drone should liftoff or stop
+boolean flying;
+
 void setup() {
   yaw = pitch = roll = 128;
   throttle = 0;
+  flying = false;
   size(1280, 720);
    String[] cameras = Capture.list();
    if (cameras.length == 0){
@@ -33,9 +37,9 @@ void setup() {
      cam.start();
    }
    
-  String portName = Serial.list()[1];
+  /*String portName = Serial.list()[1];
   System.out.println(portName);
-  myPort = new Serial(this, portName, 9600);
+  myPort = new Serial(this, portName, 9600);*/
 }
 
 void draw() {
@@ -56,79 +60,100 @@ void draw() {
 
 //Click camera window
 void keyPressed() {
-  
-  if(key == 'a') {
-    rotateLeft();
-    System.out.println("Rotate Left");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 'd') {
-    rotateRight();
-    System.out.println("Rotate Right");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 'q') {
-    rollLeft();
-    System.out.println("Roll Left");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 'e') {
-    rollRight();
-    System.out.println("Roll Right");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 'i') {
-    raise();
-    System.out.println("Raise");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 'k') {
-    lower();
-    System.out.println("Lower");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 'w') {
-    forward();
-    System.out.println("Forward");
-    delay(50);
-    hover();
-  }
-  
-  if(key == 's') {
-    backward();
-    System.out.println("Backward");
-    delay(50);
-    hover();
+  //Should not send liftoff or hover
+  if(key != ' ' && key != 'z') {
+    sendCommand(key);
   }
 }
 
 void keyReleased() {
-    if(key == ' ') {
-    startStop();
-    System.out.println("Liftoff");
-    delay(500);
-    hover();
+  //Should only do start, stop and hover commands
+  if(key == ' ' || key == 'z') {
+    sendCommand(key);
   }
+}
+
+//control commands
+void sendCommand(char command) {
+  
+  if(command == ' ') {
+    if(flying) {
+      stop();
+      System.out.println("Stop");
+    }
+    else {
+      start();
+      System.out.println("Liftoff");
+    }
+    delay(500);
+    flying = !flying;
+  }
+  
+  if(command == 'a') {
+    rotateLeft();
+    System.out.println("Rotate Left");
+  }
+  
+  if(command == 'd') {
+    rotateRight();
+    System.out.println("Rotate Right");
+  }
+  
+  if(command == 'q') {
+    rollLeft();
+    System.out.println("Roll Left");
+  }
+  
+  if(command == 'e') {
+    rollRight();
+    System.out.println("Roll Right");
+  }
+  
+  if(command == 'i') {
+    raise();
+    System.out.println("Raise");
+  }
+  
+  if(command == 'k') {
+    lower();
+    System.out.println("Lower");
+  }
+  
+  if(command == 'w') {
+    forward();
+    System.out.println("Forward");
+  }
+  
+  if(command == 's') {
+    backward();
+    System.out.println("Backward");
+  }
+  
+  if(command == 'z') {
+    hover();
+    System.out.println("Hover");
+  }
+  
+  delay(50);
+  System.out.printf("T: %d Y: %d P: %d R: %d\n\n", throttle, yaw, pitch, roll);
+  sendSLIP();
 }
 
 //Get quad location
 
 //Make decisision and run maneuver
 
-//Lift off / Kill flight
-void startStop() {
+
+//Lift - Off
+void start() {
+  pitch = 255;
+  yaw = 0;
+  throttle = 130;
+  roll = 0;
+}
+
+//Kill flight
+void stop() {
   pitch = 255;
   yaw = 0;
   throttle = 0;
@@ -137,62 +162,68 @@ void startStop() {
 
 //Hover (Default State)
 void hover() {
-  yaw = 128;
-  roll = 128;
-  pitch = 128;
+  yaw = 130;
+  roll = 130;
+  pitch = 130;
 }
 
 //Raise
 void raise() {
   if(throttle <= 250) {
-    throttle+= 5;
+    throttle += 5;
   }
 }
 
 //Lower
 void lower() {
   if(throttle >= 5) {
-    throttle-= 5;
+    throttle -= 5;
   }
 }
 
 //Forward
 void forward() {
-  pitch = 0;
+  if(pitch >= 5) {
+    pitch -= 5;
+  }
 }
 
 //Backwards
 void backward() {
-  pitch = 255;
+  if(pitch <= 250) {
+    pitch += 5;
+  }
 }
 
 
 //Left
 void rollLeft() {
-  roll = 64;
+  if(roll >= 5) {
+    roll -= 5;
+  }
   
 }
 
 //Right
 void rollRight() {
-  roll = 192;
+  if(roll <= 250) {
+    roll += 5;
+  }
 }
 
 
 //Rotate left
 void rotateLeft() {
-  yaw = 64;
-  //sendSLIP(Serial myPort, byte[] bytes)
+  if(yaw >= 5) {
+    yaw -= 5;
+  }
 }
 
 //Rotate right
 void rotateRight() {
-  yaw = 192;
-}
-
-//Default rotate state
-void defaultRotate() {
-  yaw = 128;
+  if(yaw <= 250) {
+    yaw += 5;
+  }
 }
 
 //Sends commands over serial using SLIP
