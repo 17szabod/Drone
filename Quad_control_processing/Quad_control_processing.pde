@@ -7,6 +7,7 @@ final byte SLIP_END = (byte)0xC0;
 final byte SLIP_ESC = (byte)0xDB;
 final byte SLIP_ESC_END = (byte)0xDC;
 final byte SLIP_ESC_ESC = (byte)0xDD;
+byte[] bytes = new byte[4];
 
 //Camera 
 Capture cam;
@@ -32,9 +33,9 @@ void setup() {
      cam.start();
    }
    
-  //String portName = Serial.list()[1];
-  //System.out.println(portName);
-  //myPort = new Serial(this, portName, 9600);
+  String portName = Serial.list()[1];
+  System.out.println(portName);
+  myPort = new Serial(this, portName, 9600);
 }
 
 void draw() {
@@ -128,6 +129,7 @@ void keyReleased() {
 
 //Lift off / Kill flight
 void startStop() {
+  pitch = 255;
   yaw = 0;
   throttle = 0;
   roll = 0;
@@ -138,7 +140,6 @@ void hover() {
   yaw = 128;
   roll = 128;
   pitch = 128;
-  throttle = 0;
 }
 
 //Raise
@@ -157,12 +158,12 @@ void lower() {
 
 //Forward
 void forward() {
-  pitch = 192;
+  pitch = 0;
 }
 
 //Backwards
 void backward() {
-  pitch = 64;
+  pitch = 255;
 }
 
 
@@ -195,7 +196,11 @@ void defaultRotate() {
 }
 
 //Sends commands over serial using SLIP
-void sendSLIP(Serial myPort, byte[] bytes) {
+void sendSLIP() {
+  bytes[0] = (byte) throttle;
+  bytes[1] = (byte) yaw;
+  bytes[2] = (byte) pitch;
+  bytes[3] = (byte) yaw;
   myPort.write(SLIP_END);
   for(int i=0; i<bytes.length; i++) {
      if ( bytes[i] == SLIP_END ) {
